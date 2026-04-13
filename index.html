@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐋 고래 레기온 - 레이드 스케줄</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🐋 고래 레기온</h1>
+    <p class="subtitle">AION2 레이드 스케줄 조율</p>
+    <div class="week-toggle">
+      <button id="btnThisWeek" class="week-btn active" onclick="switchWeek('this')">이번 주</button>
+      <button id="btnNextWeek" class="week-btn" onclick="switchWeek('next')">다음 주</button>
+      <span id="weekRange" class="week-range"></span>
+    </div>
+  </header>
+
+  <!-- 탭 -->
+  <nav class="tabs">
+    <button class="tab active" onclick="showTab('input')">📝 입력</button>
+    <button class="tab" onclick="showTab('status')">📊 현황표</button>
+    <button class="tab" onclick="showTab('recommend')">🏆 추천 스케줄</button>
+    <button class="tab" onclick="showTab('manage')">⚙️ 멤버 관리</button>
+  </nav>
+
+  <!-- 입력 탭 -->
+  <section id="tab-input" class="tab-content active">
+    <div class="input-section">
+      <div class="form-group">
+        <label>닉네임</label>
+        <input type="text" id="nickname" placeholder="캐릭터명 입력">
+      </div>
+      <div class="form-group">
+        <label>직업</label>
+        <div id="classSelect" class="class-grid"></div>
+      </div>
+      <div class="form-group">
+        <label>가능한 날짜 & 시간 (클릭하여 선택)</label>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
+      <div id="timeInputArea" class="time-inputs"></div>
+      <button id="submitBtn" class="submit-btn" onclick="submitSchedule()">✅ 제출하기</button>
+      <button class="reset-btn" onclick="resetForm()">🔄 입력 초기화</button>
+      <div id="submitMsg" class="submit-msg"></div>
+    </div>
+  </section>
+
+  <!-- 현황표 탭 -->
+  <section id="tab-status" class="tab-content">
+    <div id="statusTable" class="status-section"></div>
+  </section>
+
+  <!-- 추천 스케줄 탭 -->
+  <section id="tab-recommend" class="tab-content">
+    <div id="recommendResult" class="recommend-section"></div>
+  </section>
+
+  <!-- 멤버 관리 탭 -->
+  <section id="tab-manage" class="tab-content">
+    <div class="manage-section">
+      <h3>등록된 멤버</h3>
+      <div id="memberList" class="member-list"></div>
+      <button class="delete-btn" onclick="deleteSelected()">🗑️ 선택 멤버 삭제</button>
+
+      <h3 style="margin-top:30px">⚔️ 파티 편성 <small style="color:#a1887f;font-weight:400">(드래그하여 배치)</small></h3>
+      <div class="party-area">
+        <div class="party-box">
+          <div class="party-title">1파티</div>
+          <div class="party-slots" id="party1" ondrop="dropMember(event,'party1')" ondragover="event.preventDefault()">
+            <div class="party-slot empty" data-slot="1-1">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="1-2">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="1-3">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="1-4">빈 슬롯</div>
+          </div>
+        </div>
+        <div class="party-box">
+          <div class="party-title">2파티</div>
+          <div class="party-slots" id="party2" ondrop="dropMember(event,'party2')" ondragover="event.preventDefault()">
+            <div class="party-slot empty" data-slot="2-1">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="2-2">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="2-3">빈 슬롯</div>
+            <div class="party-slot empty" data-slot="2-4">빈 슬롯</div>
+          </div>
+        </div>
+      </div>
+      <div id="unassigned" class="unassigned-area" ondrop="dropMember(event,'unassigned')" ondragover="event.preventDefault()">
+        <div class="unassigned-title">미배치 멤버</div>
+        <div id="unassignedList" class="unassigned-list"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
