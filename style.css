@@ -829,17 +829,16 @@ header h1 .whale { font-size: 1.1em; }
 }
 
 .pslot {
-  padding: 10px 8px;
-  border-radius: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
   border: 2px dashed #c5e1a5;
-  text-align: center;
-  font-size: 0.85em;
-  min-height: 56px;
+  font-size: 0.83em;
+  min-height: 36px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
+  justify-content: flex-start;
+  gap: 6px;
   transition: all 0.2s;
   position: relative;
 }
@@ -854,19 +853,15 @@ header h1 .whale { font-size: 1.1em; }
 }
 .pslot.filled:active { cursor: grabbing; opacity: 0.7; }
 .pslot .slot-icon { width: 26px; height: 26px; border-radius: 50%; }
-.slot-time { color: #888; font-size: 0.78em; font-weight: 400; }
+.slot-time { color: #888; font-size: 0.78em; font-weight: 400; margin-left: auto; margin-right: 16px; }
 .slot-remove {
   position: absolute;
-  top: 3px; right: 4px;
-  background: none;
-  border: none;
-  font-size: 0.75em;
-  color: #bdbdbd;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0;
+  top: 50%; right: 4px;
+  transform: translateY(-50%);
+  background: none; border: none;
+  font-size: 0.75em; color: #bdbdbd;
+  cursor: pointer; line-height: 1; padding: 0;
 }
-.slot-remove:hover { color: #e53935; }
 
 .member-pool-title {
   font-weight: 700;
