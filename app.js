@@ -52,6 +52,20 @@ function newForce(idx) {
 function loadParties() {
   const s = localStorage.getItem('forcesData');
   forces = s ? JSON.parse(s) : [newForce(0)];
+  fixForces();
+  // 구글시트에서 forces 로드 (백그라운드)
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL + '?action=forces').then(r => r.json()).then(data => {
+      if (Array.isArray(data) && data.length) {
+        forces = data;
+        fixForces();
+        localStorage.setItem('forcesData', JSON.stringify(forces));
+        renderPartySelect();
+      }
+    }).catch(() => {});
+  }
+}
+function fixForces() {
   forces.forEach((f, fi) => {
     if (!f.color) f.color = PARTY_COLORS[fi % PARTY_COLORS.length];
     if (!f.parties) f.parties = [
@@ -65,7 +79,13 @@ function loadParties() {
     });
   });
 }
-function saveParties() { localStorage.setItem('forcesData', JSON.stringify(forces)); }
+function saveParties() {
+  localStorage.setItem('forcesData', JSON.stringify(forces));
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL, { method: 'POST', redirect: 'follow',
+      body: JSON.stringify({ action: 'saveForces', forces }) }).catch(() => {});
+  }
+}
 
 function addParty() {
   const name = prompt('포스 이름을 입력하세요', (forces.length + 1) + '포스');
@@ -246,13 +266,16 @@ function showTab(name) {
 // ===== 데이터 =====
 function loadData() {
   const s = localStorage.getItem('raidData');
-  if (s) { allData = JSON.parse(s); applyAssignments(); }
+  if (s) { allData = JSON.parse(s); renderAll(); }
   if (SCRIPT_URL) {
-    fetch(SCRIPT_URL)
-      .then(r => r.json())
-      .then(data => { allData = data; applyAssignments(); saveData(); renderStatus(); renderRecommend(); })
-      .catch(() => {});
+    fetch(SCRIPT_URL).then(r => r.json())
+      .then(data => { allData = data; saveData(); renderAll(); })
+      .catch(e => showMsg('⚠️ 서버 연결 실패 — 로컬 데이터 사용 중', '#e65100'));
   }
+}
+function renderAll() {
+  renderStatus(); renderRecommend(); renderMembers();
+  if (document.getElementById('partyBoardArea')?.innerHTML) { renderPartyBoard(); renderMemberPool(); }
 }
 function saveData() { localStorage.setItem('raidData', JSON.stringify(allData)); }
 
@@ -273,13 +296,10 @@ function submitSchedule() {
     submitted: new Date().toISOString()
   };
   allData.push(entry);
-  // 배정 정보 저장
-  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
-  assignments[nick] = selectedPartyId;
-  localStorage.setItem('partyAssignments', JSON.stringify(assignments));
   saveData();
   showMsg('✅ 제출 완료! ' + nick + ' (' + CLASSES[selectedClass].name + ') — ' + entry.partyName, '#2e7d32');
   resetForm();
+  renderAll();
 
   if (SCRIPT_URL) {
     fetch(SCRIPT_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(entry) })
@@ -357,24 +377,16 @@ function renderStatus() {
 
 function assignToForce(nickname, forceId) {
   if (!forceId) return;
-  // 배정 정보 별도 저장
-  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
-  assignments[nickname] = forceId;
-  localStorage.setItem('partyAssignments', JSON.stringify(assignments));
-  // allData에 반영
-  applyAssignments();
+  allData.forEach(m => {
+    if (m.nickname === nickname) { m.partyId = forceId; m.partyName = forces.find(f => f.id === forceId)?.name || ''; }
+  });
   saveData();
   renderStatus();
-}
-
-function applyAssignments() {
-  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
-  allData.forEach(m => {
-    if (assignments[m.nickname]) {
-      m.partyId = assignments[m.nickname];
-      m.partyName = forces.find(f => f.id === assignments[m.nickname])?.name || '';
-    }
-  });
+  // 구글시트에도 반영 (해당 멤버 재전송)
+  if (SCRIPT_URL) {
+    const m = allData.find(d => d.nickname === nickname);
+    if (m) fetch(SCRIPT_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(m) }).catch(() => {});
+  }
 }
 
 // ===== 추천 스케줄 =====
