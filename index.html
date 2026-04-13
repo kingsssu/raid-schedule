@@ -23,6 +23,7 @@
     <button class="tab active" onclick="showTab('input')">📝 입력</button>
     <button class="tab" onclick="showTab('status')">📊 현황표</button>
     <button class="tab" onclick="showTab('recommend')">🏆 추천 스케줄</button>
+    <button class="tab" onclick="showTab('party')">⚔️ 파티 편성</button>
     <button class="tab" onclick="showTab('manage')">⚙️ 멤버 관리</button>
   </nav>
 
@@ -36,6 +37,10 @@
       <div class="form-group">
         <label>직업</label>
         <div id="classSelect" class="class-grid"></div>
+      </div>
+      <div class="form-group">
+        <label>파티 선택</label>
+        <div id="partySelect" class="party-select-group"></div>
       </div>
       <div class="form-group">
         <label>가능한 날짜 & 시간 (클릭하여 선택)</label>
@@ -64,32 +69,20 @@
       <h3>등록된 멤버</h3>
       <div id="memberList" class="member-list"></div>
       <button class="delete-btn" onclick="deleteSelected()">🗑️ 선택 멤버 삭제</button>
+    </div>
+  </section>
 
-      <h3 style="margin-top:30px">⚔️ 파티 편성 <small style="color:#a1887f;font-weight:400">(드래그하여 배치)</small></h3>
-      <div class="party-area">
-        <div class="party-box">
-          <div class="party-title">1파티</div>
-          <div class="party-slots" id="party1" ondrop="dropMember(event,'party1')" ondragover="event.preventDefault()">
-            <div class="party-slot empty" data-slot="1-1">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="1-2">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="1-3">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="1-4">빈 슬롯</div>
-          </div>
-        </div>
-        <div class="party-box">
-          <div class="party-title">2파티</div>
-          <div class="party-slots" id="party2" ondrop="dropMember(event,'party2')" ondragover="event.preventDefault()">
-            <div class="party-slot empty" data-slot="2-1">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="2-2">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="2-3">빈 슬롯</div>
-            <div class="party-slot empty" data-slot="2-4">빈 슬롯</div>
-          </div>
-        </div>
+  <!-- 파티 편성 탭 -->
+  <section id="tab-party" class="tab-content">
+    <div class="party-manage-section">
+      <div class="party-config-bar">
+        <div id="partyConfigList" class="party-config-list"></div>
+        <button class="party-add-btn" onclick="addParty()">＋ 파티 추가</button>
       </div>
-      <div id="unassigned" class="unassigned-area" ondrop="dropMember(event,'unassigned')" ondragover="event.preventDefault()">
-        <div class="unassigned-title">미배치 멤버</div>
-        <div id="unassignedList" class="unassigned-list"></div>
-      </div>
+      <div id="partyBoardArea" class="party-board-area"></div>
+      <div class="member-pool-title">👥 전체 멤버 <small style="color:#a1887f">(드래그하여 파티 슬롯에 배치)</small></div>
+      <div id="memberPool" class="member-pool"
+        ondrop="dropToPool(event)" ondragover="event.preventDefault()"></div>
     </div>
   </section>
 </div>
