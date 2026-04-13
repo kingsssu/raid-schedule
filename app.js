@@ -600,7 +600,7 @@ function dropToSlot(e, fid, pid, slotIdx) {
     if (empty !== -1) p.slots[empty] = nick;
     else p.slots[slotIdx] = nick;
   }
-  saveParties(); renderPartyBoard();
+  saveParties(); renderPartyBoard(); renderMemberPool();
 }
 
 function dropToPool(e) {
@@ -616,5 +616,5 @@ function removeSlot(fid, pid, slotIdx) {
   const p = f?.parties.find(x => x.id === pid);
   if (!p) return;
   p.slots[slotIdx] = null;
-  saveParties(); renderPartyBoard();
+  saveParties(); renderPartyBoard(); renderMemberPool();
 }
