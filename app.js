@@ -555,7 +555,13 @@ function renderMemberPool() {
   const keys = getWeekDates(currentWeek).map(fmt);
   const wd = allData.filter(d => d.dates.some(dd => keys.includes(dd.date)));
   if (!wd.length) { el.innerHTML = '<span style="color:#bdbdbd">등록된 멤버가 없습니다</span>'; return; }
-  el.innerHTML = wd.map(m => {
+
+  const assigned = new Set(forces.flatMap(f => f.parties.flatMap(p => p.slots.filter(Boolean))));
+
+  const unplaced = wd.filter(m => !assigned.has(m.nickname));
+  if (!unplaced.length) { el.innerHTML = '<span style="color:#bdbdbd;font-size:0.85em">모든 멤버가 배치됨 ✅</span>'; return; }
+
+  el.innerHTML = unplaced.map(m => {
     const c = CLASSES[m.classIdx];
     const timeInfo = getAvailTime(m, keys);
     const pName = forces.find(f => f.id === m.partyId)?.name || m.partyName || '';
