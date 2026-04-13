@@ -835,12 +835,17 @@ header h1 .whale { font-size: 1.1em; }
   font-size: 0.83em;
   min-height: 36px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
   transition: all 0.2s;
   position: relative;
+}
+.pslot-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 .pslot.empty { color: #bdbdbd; background: rgba(255,255,255,0.5); cursor: default; }
 .pslot.empty:hover { background: rgba(102,187,106,0.08); border-color: #a5d6a7; }
@@ -853,7 +858,7 @@ header h1 .whale { font-size: 1.1em; }
 }
 .pslot.filled:active { cursor: grabbing; opacity: 0.7; }
 .pslot .slot-icon { width: 26px; height: 26px; border-radius: 50%; }
-.slot-time { color: #888; font-size: 0.78em; font-weight: 400; margin-left: auto; margin-right: 16px; }
+.slot-time { color: #888; font-size: 0.75em; font-weight: 400; padding-left: 2px; }
 .slot-remove {
   position: absolute;
   top: 50%; right: 4px;

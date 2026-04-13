@@ -123,6 +123,10 @@ function switchWeek(which) {
   renderCalendar();
   renderStatus();
   renderRecommend();
+  // 현재 열린 탭도 갱신
+  const activeTab = document.querySelector('.tab-content.active')?.id;
+  if (activeTab === 'tab-manage') renderMembers();
+  if (activeTab === 'tab-party') { renderPartyBoard(); renderMemberPool(); }
 }
 
 // ===== 직업 선택 =====
@@ -241,11 +245,11 @@ function showTab(name) {
 // ===== 데이터 =====
 function loadData() {
   const s = localStorage.getItem('raidData');
-  if (s) allData = JSON.parse(s);
+  if (s) { allData = JSON.parse(s); applyAssignments(); }
   if (SCRIPT_URL) {
     fetch(SCRIPT_URL)
       .then(r => r.json())
-      .then(data => { allData = data; saveData(); renderStatus(); renderRecommend(); })
+      .then(data => { allData = data; applyAssignments(); saveData(); renderStatus(); renderRecommend(); })
       .catch(() => {});
   }
 }
@@ -268,6 +272,10 @@ function submitSchedule() {
     submitted: new Date().toISOString()
   };
   allData.push(entry);
+  // 배정 정보 저장
+  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
+  assignments[nick] = selectedPartyId;
+  localStorage.setItem('partyAssignments', JSON.stringify(assignments));
   saveData();
   showMsg('✅ 제출 완료! ' + nick + ' (' + CLASSES[selectedClass].name + ') — ' + entry.partyName, '#2e7d32');
   resetForm();
@@ -348,13 +356,24 @@ function renderStatus() {
 
 function assignToForce(nickname, forceId) {
   if (!forceId) return;
-  allData.forEach(m => { if (m.nickname === nickname) { m.partyId = forceId; m.partyName = forces.find(f => f.id === forceId)?.name || ''; } });
+  // 배정 정보 별도 저장
+  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
+  assignments[nickname] = forceId;
+  localStorage.setItem('partyAssignments', JSON.stringify(assignments));
+  // allData에 반영
+  applyAssignments();
   saveData();
-  if (SCRIPT_URL) {
-    const entry = allData.find(m => m.nickname === nickname);
-    if (entry) fetch(SCRIPT_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(entry) }).catch(() => {});
-  }
   renderStatus();
+}
+
+function applyAssignments() {
+  const assignments = JSON.parse(localStorage.getItem('partyAssignments') || '{}');
+  allData.forEach(m => {
+    if (assignments[m.nickname]) {
+      m.partyId = assignments[m.nickname];
+      m.partyName = forces.find(f => f.id === assignments[m.nickname])?.name || '';
+    }
+  });
 }
 
 // ===== 추천 스케줄 =====
@@ -506,10 +525,12 @@ function renderPartyBoard() {
             ondragstart="dragMember(event,'${nick}')"
             ondrop="dropToSlot(event,'${f.id}','${p.id}',${i})" ondragover="event.preventDefault()"
             style="${c ? `border-color:${c.color};background:${c.color}11` : ''}">
-            ${c ? `<img src="${c.icon}" class="slot-icon">` : ''}
-            <span>${nick}</span>
+            <div class="pslot-row">
+              ${c ? `<img src="${c.icon}" class="slot-icon">` : ''}
+              <span>${nick}</span>
+              <button class="slot-remove" onclick="removeSlot('${f.id}','${p.id}',${i})">✕</button>
+            </div>
             ${timeInfo ? `<small class="slot-time">${timeInfo}</small>` : ''}
-            <button class="slot-remove" onclick="removeSlot('${f.id}','${p.id}',${i})">✕</button>
           </div>`;
         }
         return `<div class="pslot empty"
