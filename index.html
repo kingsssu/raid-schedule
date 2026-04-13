@@ -24,6 +24,7 @@
     <button class="tab" onclick="showTab('status')">📊 현황표</button>
     <button class="tab" onclick="showTab('recommend')">🏆 추천 스케줄</button>
     <button class="tab" onclick="showTab('party')">⚔️ 파티 편성</button>
+    <button class="tab" onclick="showTab('ranking')">🐋 고래의 전당</button>
     <button class="tab" onclick="showTab('manage')">⚙️ 멤버 관리</button>
   </nav>
 
@@ -85,6 +86,11 @@
         ondrop="dropToPool(event)" ondragover="event.preventDefault()"></div>
     </div>
   </section>
+  <!-- 랭킹 탭 -->
+  <section id="tab-ranking" class="tab-content">
+    <div id="rankingContent" class="ranking-section"></div>
+  </section>
+
 </div>
 
 <script src="app.js"></script>

@@ -1154,3 +1154,62 @@ header h1 .whale { font-size: 1.1em; }
   background: #f9f9f9;
 }
 .member-group-title:first-child { margin-top: 0; }
+
+/* 고래의 전당 */
+.whale-hall { padding: 4px 0; }
+.whale-hall-header {
+  text-align: center; padding: 20px 16px;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 40%, #0288d1 100%);
+  border-radius: 16px; margin-bottom: 16px; position: relative; overflow: hidden;
+}
+.whale-hall-header::before {
+  content: '🐋'; position: absolute; font-size: 5em; opacity: 0.1;
+  right: -10px; top: -10px;
+}
+.whale-title { font-size: 1.5em; font-weight: 800; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.whale-subtitle { color: rgba(255,255,255,0.8); font-size: 0.85em; margin-top: 4px; }
+
+.whale-filters {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; justify-content: center;
+}
+.whale-filter-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 12px; border-radius: 20px; border: 1.5px solid #bbdefb;
+  background: #fff; color: #1565c0; font-size: 0.8em; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.whale-filter-btn:hover { background: #e3f2fd; }
+.whale-filter-btn.active { background: #1565c0; color: #fff; border-color: #1565c0; }
+.whale-filter-icon { width: 18px; height: 18px; border-radius: 50%; }
+
+.ranking-podium {
+  display: flex; justify-content: center; align-items: flex-end;
+  gap: 12px; margin-bottom: 24px; padding: 0 10px;
+}
+.podium-card {
+  display: flex; flex-direction: column; align-items: center;
+  background: #fff; border-radius: 16px; padding: 16px 14px 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08); position: relative; flex: 1; max-width: 140px;
+}
+.podium-1 { border: 2px solid #FFD700; order: 2; transform: translateY(-12px); background: linear-gradient(180deg, #fffde7, #fff); }
+.podium-2 { border: 2px solid #C0C0C0; order: 1; background: linear-gradient(180deg, #f5f5f5, #fff); }
+.podium-3 { border: 2px solid #CD7F32; order: 3; background: linear-gradient(180deg, #fff3e0, #fff); }
+.podium-medal { font-size: 2em; line-height: 1; }
+.podium-rank { font-size: 0.75em; color: #999; margin: 2px 0 6px; }
+.podium-class-icon { width: 36px; height: 36px; border-radius: 50%; margin-bottom: 6px; }
+.podium-nick { font-weight: 700; font-size: 1em; color: #333; }
+.podium-job { font-size: 0.78em; margin: 2px 0 4px; }
+.podium-power { font-size: 0.85em; font-weight: 600; color: #0d47a1; }
+
+.ranking-list { display: flex; flex-direction: column; gap: 4px; }
+.ranking-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: #fafafa; border-radius: 10px;
+  border: 1px solid #e3f2fd; transition: background 0.2s;
+}
+.ranking-row:hover { background: #e3f2fd; }
+.ranking-num { width: 30px; text-align: center; font-weight: 700; color: #1565c0; font-size: 0.9em; }
+.ranking-class-icon { width: 28px; height: 28px; border-radius: 50%; }
+.ranking-nick { flex: 1; font-weight: 600; color: #333; }
+.ranking-job { font-size: 0.8em; width: 50px; text-align: center; }
+.ranking-power { font-weight: 600; color: #0d47a1; font-size: 0.9em; min-width: 70px; text-align: right; }

@@ -240,6 +240,7 @@ function showTab(name) {
   if (name === 'recommend') renderRecommend();
   if (name === 'manage') renderMembers();
   if (name === 'party') { renderPartyConfigList(); renderPartyBoard(); renderMemberPool(); }
+  if (name === 'ranking') renderRanking();
 }
 
 // ===== 데이터 =====
@@ -618,3 +619,105 @@ function removeSlot(fid, pid, slotIdx) {
   p.slots[slotIdx] = null;
   saveParties(); renderPartyBoard(); renderMemberPool();
 }
+
+// ===== 고래의 전당 =====
+let rankingData = null;
+let rankingFilter = '전체';
+
+function fetchRanking() {
+  const cached = localStorage.getItem('rankingCache');
+  if (cached) {
+    rankingData = JSON.parse(cached);
+    renderRankingWith(rankingData);
+  }
+  if (SCRIPT_URL) {
+    fetch(SCRIPT_URL + '?action=ranking')
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.members) {
+          localStorage.setItem('rankingCache', JSON.stringify(data));
+          rankingData = data;
+          renderRankingWith(data);
+        }
+      }).catch(() => {});
+  } else if (!cached) {
+    renderRankingWith(RANKING_CACHE);
+  }
+}
+function getClassByName(name) { return CLASSES.find(c => c.name === name); }
+function fmtPower(n) { return `${n.toLocaleString()} (${(n/1000).toFixed(1)}K)`; }
+
+function setRankingFilter(job) {
+  rankingFilter = job;
+  document.querySelectorAll('.whale-filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.job === job);
+  });
+  renderRankingList();
+}
+
+function renderRanking() {
+  const el = document.getElementById('rankingContent');
+  if (!rankingData) el.innerHTML = '<p style="text-align:center;color:#999;padding:40px">🐋 데이터 로딩 중...</p>';
+  fetchRanking();
+}
+
+function renderRankingWith(data) {
+  rankingData = data;
+  const el = document.getElementById('rankingContent');
+  const members = data.members.filter(m => m.combat_power2 > 0);
+  const medals = ['👑', '🥈', '🥉'];
+
+  let html = `<div class="whale-hall">
+    <div class="whale-hall-header">
+      <div class="whale-title">🐋 고래의 전당</div>
+      <div class="whale-subtitle">지켈 서버 ${data.server_rank}위 (상위 ${data.server_rank_percent}%)</div>
+    </div>
+    <div class="whale-filters">
+      <button class="whale-filter-btn active" data-job="전체" onclick="setRankingFilter('전체')">전체</button>`;
+  CLASSES.forEach(c => {
+    html += `<button class="whale-filter-btn" data-job="${c.name}" onclick="setRankingFilter('${c.name}')"><img src="${c.icon}" class="whale-filter-icon">${c.name}</button>`;
+  });
+  html += `</div>`;
+
+  html += '<div class="ranking-podium">';
+  [1, 0, 2].forEach(i => {
+    const m = members[i]; if (!m) return;
+    const cls = getClassByName(m.job);
+    html += `<div class="podium-card podium-${i+1}">
+      <div class="podium-medal">${medals[i]}</div>
+      <div class="podium-rank">${i+1}등</div>
+      ${cls ? `<img src="${cls.icon}" class="podium-class-icon" alt="${m.job}">` : ''}
+      <div class="podium-nick">${m.nickname}</div>
+      <div class="podium-job" style="color:${cls?.color || '#666'}">${m.job}</div>
+      <div class="podium-power">${fmtPower(m.combat_power2)}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  html += '<div id="rankingListArea"></div></div>';
+  el.innerHTML = html;
+  renderRankingList();
+}
+
+function renderRankingList() {
+  const members = rankingData.members.filter(m => m.combat_power2 > 0);
+  const filtered = rankingFilter === '전체' ? members : members.filter(m => m.job === rankingFilter);
+  let html = '<div class="ranking-list">';
+  filtered.forEach((m, i) => {
+    const globalRank = members.indexOf(m) + 1;
+    if (globalRank <= 3 && rankingFilter === '전체') return;
+    const cls = getClassByName(m.job);
+    html += `<div class="ranking-row">
+      <span class="ranking-num">${rankingFilter === '전체' ? globalRank : i + 1}</span>
+      ${cls ? `<img src="${cls.icon}" class="ranking-class-icon" alt="${m.job}">` : ''}
+      <span class="ranking-nick">${m.nickname}</span>
+      <span class="ranking-job" style="color:${cls?.color || '#666'}">${m.job}</span>
+      <span class="ranking-power">${fmtPower(m.combat_power2)}</span>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('rankingListArea').innerHTML = html;
+}
+
+// 임시 하드코딩 데이터 (로컬 테스트용)
+const RANKING_CACHE = {"avg_combat_power":"3374.18","avg_combat_power2":"280578.46","guild":"고래","members":[{"combat_power":4188,"combat_power2":548754,"job":"마도성","nickname":"나우","race":"마족","server":"지켈"},{"combat_power":4160,"combat_power2":545560,"job":"검성","nickname":"구력","race":"마족","server":"지켈"},{"combat_power":4197,"combat_power2":542533,"job":"궁성","nickname":"궁치","race":"마족","server":"지켈"},{"combat_power":4153,"combat_power2":536360,"job":"마도성","nickname":"현뱅","race":"마족","server":"지켈"},{"combat_power":4214,"combat_power2":527213,"job":"정령성","nickname":"엘프리데","race":"마족","server":"지켈"},{"combat_power":4066,"combat_power2":521780,"job":"마도성","nickname":"황후","race":"마족","server":"지켈"},{"combat_power":3994,"combat_power2":513973,"job":"수호성","nickname":"지범","race":"마족","server":"지켈"},{"combat_power":4146,"combat_power2":503472,"job":"마도성","nickname":"꿀오드","race":"마족","server":"지켈"},{"combat_power":4069,"combat_power2":503433,"job":"궁성","nickname":"별란","race":"마족","server":"지켈"},{"combat_power":3984,"combat_power2":503291,"job":"궁성","nickname":"에디","race":"마족","server":"지켈"},{"combat_power":4085,"combat_power2":502180,"job":"치유성","nickname":"창숙","race":"마족","server":"지켈"},{"combat_power":4164,"combat_power2":498442,"job":"치유성","nickname":"불족집","race":"마족","server":"지켈"},{"combat_power":4034,"combat_power2":496511,"job":"살성","nickname":"별성","race":"마족","server":"지켈"},{"combat_power":3974,"combat_power2":481446,"job":"호법성","nickname":"건부","race":"마족","server":"지켈"},{"combat_power":4034,"combat_power2":481028,"job":"살성","nickname":"호치","race":"마족","server":"지켈"},{"combat_power":4128,"combat_power2":476932,"job":"수호성","nickname":"명장","race":"마족","server":"지켈"},{"combat_power":4003,"combat_power2":475918,"job":"호법성","nickname":"차원","race":"마족","server":"지켈"},{"combat_power":4018,"combat_power2":468776,"job":"호법성","nickname":"꺄릉","race":"마족","server":"지켈"},{"combat_power":4097,"combat_power2":464130,"job":"호법성","nickname":"넬쥴","race":"마족","server":"지켈"},{"combat_power":4003,"combat_power2":464062,"job":"살성","nickname":"키울","race":"마족","server":"지켈"},{"combat_power":3894,"combat_power2":461642,"job":"정령성","nickname":"실피","race":"마족","server":"지켈"},{"combat_power":3926,"combat_power2":458588,"job":"호법성","nickname":"수학","race":"마족","server":"지켈"},{"combat_power":4062,"combat_power2":457265,"job":"정령성","nickname":"뷰라알","race":"마족","server":"지켈"},{"combat_power":3925,"combat_power2":456736,"job":"검성","nickname":"준검","race":"마족","server":"지켈"},{"combat_power":4140,"combat_power2":449560,"job":"치유성","nickname":"범고래","race":"마족","server":"지켈"},{"combat_power":3966,"combat_power2":448082,"job":"수호성","nickname":"방백","race":"마족","server":"지켈"},{"combat_power":3853,"combat_power2":438681,"job":"수호성","nickname":"째밍","race":"마족","server":"지켈"},{"combat_power":3879,"combat_power2":436640,"job":"정령성","nickname":"드릉드릉","race":"마족","server":"지켈"},{"combat_power":4031,"combat_power2":435951,"job":"궁성","nickname":"흑색호랑이","race":"마족","server":"지켈"},{"combat_power":3896,"combat_power2":435487,"job":"살성","nickname":"슥슥","race":"마족","server":"지켈"},{"combat_power":3976,"combat_power2":432898,"job":"치유성","nickname":"하윤","race":"마족","server":"지켈"},{"combat_power":3916,"combat_power2":408965,"job":"치유성","nickname":"차차","race":"마족","server":"지켈"},{"combat_power":3728,"combat_power2":397006,"job":"호법성","nickname":"진성호법","race":"마족","server":"지켈"},{"combat_power":3819,"combat_power2":386817,"job":"정령성","nickname":"강탑","race":"마족","server":"지켈"},{"combat_power":3863,"combat_power2":384850,"job":"살성","nickname":"투명","race":"마족","server":"지켈"},{"combat_power":3599,"combat_power2":381951,"job":"마도성","nickname":"쿠베라","race":"마족","server":"지켈"},{"combat_power":3693,"combat_power2":376176,"job":"호법성","nickname":"팡팡","race":"마족","server":"지켈"},{"combat_power":3715,"combat_power2":372845,"job":"치유성","nickname":"참수리","race":"마족","server":"지켈"},{"combat_power":3879,"combat_power2":368576,"job":"치유성","nickname":"팀장님보고섭니다","race":"마족","server":"지켈"},{"combat_power":3719,"combat_power2":343175,"job":"정령성","nickname":"소희","race":"마족","server":"지켈"},{"combat_power":3419,"combat_power2":322667,"job":"치유성","nickname":"진성치유","race":"마족","server":"지켈"},{"combat_power":3501,"combat_power2":306666,"job":"살성","nickname":"불검집","race":"마족","server":"지켈"},{"combat_power":3313,"combat_power2":298429,"job":"궁성","nickname":"쭈","race":"마족","server":"지켈"},{"combat_power":3430,"combat_power2":298122,"job":"호법성","nickname":"찬드라하스","race":"마족","server":"지켈"},{"combat_power":3400,"combat_power2":284100,"job":"살성","nickname":"쌍방울","race":"마족","server":"지켈"},{"combat_power":3327,"combat_power2":282367,"job":"궁성","nickname":"진성궁성","race":"마족","server":"지켈"},{"combat_power":3244,"combat_power2":279030,"job":"호법성","nickname":"호떡조아","race":"마족","server":"지켈"},{"combat_power":3436,"combat_power2":275590,"job":"살성","nickname":"역삼리바이","race":"마족","server":"지켈"},{"combat_power":3312,"combat_power2":273041,"job":"정령성","nickname":"진성정령","race":"마족","server":"지켈"},{"combat_power":3334,"combat_power2":270447,"job":"치유성","nickname":"히카르도","race":"마족","server":"지켈"},{"combat_power":3288,"combat_power2":261532,"job":"호법성","nickname":"시울","race":"마족","server":"지켈"},{"combat_power":3360,"combat_power2":260879,"job":"치유성","nickname":"펄스","race":"마족","server":"지켈"},{"combat_power":3257,"combat_power2":260727,"job":"마도성","nickname":"왕코","race":"마족","server":"지켈"},{"combat_power":3328,"combat_power2":252153,"job":"궁성","nickname":"목숨","race":"마족","server":"지켈"},{"combat_power":3171,"combat_power2":239080,"job":"정령성","nickname":"카사노박","race":"마족","server":"지켈"},{"combat_power":3413,"combat_power2":238550,"job":"궁성","nickname":"앙앙","race":"마족","server":"지켈"},{"combat_power":3434,"combat_power2":237916,"job":"수호성","nickname":"동동","race":"마족","server":"지켈"},{"combat_power":3251,"combat_power2":233883,"job":"궁성","nickname":"에나멜","race":"마족","server":"지켈"},{"combat_power":3290,"combat_power2":230516,"job":"수호성","nickname":"근력","race":"마족","server":"지켈"},{"combat_power":3191,"combat_power2":224235,"job":"치유성","nickname":"별황","race":"마족","server":"지켈"},{"combat_power":3109,"combat_power2":213255,"job":"정령성","nickname":"정령궁치","race":"마족","server":"지켈"},{"combat_power":3432,"combat_power2":212949,"job":"치유성","nickname":"전사들의아이돌","race":"마족","server":"지켈"},{"combat_power":2976,"combat_power2":207616,"job":"호법성","nickname":"호법쨈","race":"마족","server":"지켈"},{"combat_power":3214,"combat_power2":204202,"job":"치유성","nickname":"불난집","race":"마족","server":"지켈"},{"combat_power":3273,"combat_power2":194105,"job":"검성","nickname":"초콜릿파인트","race":"마족","server":"지켈"},{"combat_power":3228,"combat_power2":191281,"job":"궁성","nickname":"굵탑","race":"마족","server":"지켈"},{"combat_power":3159,"combat_power2":188289,"job":"수호성","nickname":"김막공","race":"마족","server":"지켈"},{"combat_power":3233,"combat_power2":186779,"job":"궁성","nickname":"파초람","race":"마족","server":"지켈"},{"combat_power":2923,"combat_power2":184666,"job":"궁성","nickname":"째밍이","race":"마족","server":"지켈"},{"combat_power":3195,"combat_power2":177245,"job":"정령성","nickname":"수마","race":"마족","server":"지켈"},{"combat_power":3049,"combat_power2":176615,"job":"치유성","nickname":"살아라","race":"마족","server":"지켈"},{"combat_power":3012,"combat_power2":170518,"job":"마도성","nickname":"불법집","race":"마족","server":"지켈"},{"combat_power":3046,"combat_power2":166297,"job":"검성","nickname":"로이","race":"마족","server":"지켈"},{"combat_power":3055,"combat_power2":166028,"job":"치유성","nickname":"보롱","race":"마족","server":"지켈"},{"combat_power":3108,"combat_power2":164985,"job":"치유성","nickname":"얼통","race":"마족","server":"지켈"},{"combat_power":2949,"combat_power2":164194,"job":"살성","nickname":"척력","race":"마족","server":"지켈"},{"combat_power":2716,"combat_power2":161182,"job":"호법성","nickname":"바스티안","race":"마족","server":"지켈"},{"combat_power":2891,"combat_power2":160814,"job":"마도성","nickname":"조혜련","race":"마족","server":"지켈"},{"combat_power":2805,"combat_power2":157943,"job":"살성","nickname":"단검쨈","race":"마족","server":"지켈"},{"combat_power":2762,"combat_power2":156073,"job":"호법성","nickname":"그릉그릉","race":"마족","server":"지켈"},{"combat_power":2821,"combat_power2":154606,"job":"검성","nickname":"묵묵","race":"마족","server":"지켈"},{"combat_power":2702,"combat_power2":151158,"job":"정령성","nickname":"픨","race":"마족","server":"지켈"},{"combat_power":2942,"combat_power2":147672,"job":"치유성","nickname":"왕세자","race":"마족","server":"지켈"},{"combat_power":2664,"combat_power2":142664,"job":"궁성","nickname":"정키","race":"마족","server":"지켈"},{"combat_power":2835,"combat_power2":139424,"job":"마도성","nickname":"런부","race":"마족","server":"지켈"},{"combat_power":2646,"combat_power2":137373,"job":"검성","nickname":"검성베어","race":"마족","server":"지켈"},{"combat_power":2586,"combat_power2":135932,"job":"검성","nickname":"읠","race":"마족","server":"지켈"},{"combat_power":2715,"combat_power2":131528,"job":"치유성","nickname":"날로먹","race":"마족","server":"지켈"},{"combat_power":2711,"combat_power2":127699,"job":"호법성","nickname":"보롱이","race":"마족","server":"지켈"},{"combat_power":2332,"combat_power2":120826,"job":"궁성","nickname":"싈","race":"마족","server":"지켈"},{"combat_power":2557,"combat_power2":111936,"job":"치유성","nickname":"작약","race":"마족","server":"지켈"},{"combat_power":2237,"combat_power2":106388,"job":"궁성","nickname":"장설혁","race":"마족","server":"지켈"},{"combat_power":2508,"combat_power2":100779,"job":"치유성","nickname":"강설혁","race":"마족","server":"지켈"},{"combat_power":1969,"combat_power2":92279,"job":"정령성","nickname":"준곰","race":"마족","server":"지켈"},{"combat_power":909,"combat_power2":57245,"job":"치유성","nickname":"옐로우","race":"마족","server":"지켈"},{"combat_power":1703,"combat_power2":0,"job":"검성","nickname":"킹갑바","race":"마족","server":"지켈"},{"combat_power":2527,"combat_power2":0,"job":"호법성","nickname":"꾜치","race":"마족","server":"지켈"},{"combat_power":2791,"combat_power2":0,"job":"치유성","nickname":"해결","race":"마족","server":"지켈"},{"combat_power":3106,"combat_power2":0,"job":"궁성","nickname":"트렁크","race":"마족","server":"지켈"},{"combat_power":3121,"combat_power2":0,"job":"마도성","nickname":"꿀베어","race":"마족","server":"지켈"}],"pagination":{"page":1,"per_page":100,"total_count":104,"total_pages":2},"server":"지켈","server_rank":15,"server_rank_percent":0.85,"success":true,"total_members":104,"total_server_guilds":1765};
