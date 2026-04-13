@@ -725,16 +725,6 @@ header h1 .whale { font-size: 1.1em; }
 .drag-member:active { cursor: grabbing; opacity: 0.7; }
 .drag-member .drag-icon { width: 22px; height: 22px; border-radius: 50%; }
 
-@media (max-width: 600px) {
-  .class-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .class-btn { font-size: 0.75em; padding: 10px 4px; }
-  .class-btn .class-icon { font-size: 1.3em; }
-  .tabs { flex-wrap: wrap; }
-  .tab { font-size: 0.78em; padding: 10px 6px; }
-  .summary-grid { grid-template-columns: repeat(4, 1fr); }
-  .time-row { flex-wrap: wrap; }
-}
-
 /* ===== 파티 편성 탭 ===== */
 .party-manage-section { padding: 4px 0; }
 
@@ -906,10 +896,6 @@ header h1 .whale { font-size: 1.1em; }
 .pool-member:active { cursor: grabbing; opacity: 0.7; }
 .pool-member .drag-icon { width: 28px; height: 28px; border-radius: 50%; }
 .pool-time { font-size: 0.78em; font-weight: 400; }
-
-@media (max-width: 600px) {
-  .pslot-grid { grid-template-columns: repeat(2, 1fr); }
-}
 
 /* ===== 입력 탭 - 파티 선택 ===== */
 .party-select-group {
@@ -1213,3 +1199,151 @@ header h1 .whale { font-size: 1.1em; }
 .ranking-nick { flex: 1; font-weight: 600; color: #333; }
 .ranking-job { font-size: 0.8em; width: 50px; text-align: center; }
 .ranking-power { font-weight: 600; color: #0d47a1; font-size: 0.9em; min-width: 70px; text-align: right; }
+
+/* ===== 모바일 반응형 ===== */
+@media (max-width: 768px) {
+  .container { padding: 10px 6px; }
+
+  /* 헤더 */
+  header { padding: 18px 0 12px; }
+  header h1 { font-size: 1.6em; }
+  .subtitle { font-size: 0.82em; }
+  .week-toggle { gap: 6px; flex-wrap: wrap; }
+  .week-btn { padding: 7px 16px; font-size: 0.82em; }
+  .week-range { font-size: 0.72em; width: 100%; text-align: center; }
+
+  /* 탭 - 2행 그리드 */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 3px;
+    margin: 12px 0 0;
+  }
+  .tab {
+    font-size: 0.72em;
+    padding: 9px 4px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .tab-content {
+    padding: 14px 10px;
+    border-radius: 0 0 12px 12px;
+    min-height: 200px;
+  }
+
+  /* 입력 폼 */
+  .form-group { margin-bottom: 16px; }
+  .form-group label { font-size: 0.85em; margin-bottom: 6px; }
+  .form-group input[type="text"] { padding: 10px 12px; font-size: 0.92em; }
+
+  /* 직업 선택 */
+  .class-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .class-btn { font-size: 0.72em; padding: 8px 3px; border-radius: 10px; }
+  .class-icon-img { width: 28px; height: 28px; }
+
+  /* 파티 선택 */
+  .party-select-group { gap: 6px; }
+  .party-sel-item { padding: 6px 10px; font-size: 0.8em; border-radius: 16px; }
+  .party-sel-edit, .party-sel-del { font-size: 0.7em; }
+
+  /* 달력 */
+  .calendar-grid { gap: 4px; }
+  .cal-header { font-size: 0.78em; padding: 4px; }
+  .cal-day { padding: 10px 2px; font-size: 0.78em; border-radius: 8px; }
+
+  /* 시간 입력 */
+  .time-row { padding: 8px 10px; gap: 6px; flex-wrap: wrap; }
+  .time-row label { min-width: 60px; font-size: 0.8em; }
+  .time-select { padding: 5px 6px; font-size: 0.82em; }
+  .day-round-select { gap: 3px; }
+  .day-round-btn { padding: 3px 8px; font-size: 0.72em; }
+
+  /* 제출/초기화 버튼 */
+  .submit-btn { padding: 14px; font-size: 1em; }
+  .reset-btn { padding: 10px; font-size: 0.88em; }
+
+  /* 현황표 - 가로 스크롤 */
+  .status-party-block { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .status-table { min-width: 520px; font-size: 0.75em; }
+  .status-table th, .status-table td { padding: 8px 4px; }
+  .status-party-title { font-size: 0.88em; padding: 6px 10px; }
+  .nickname-cell { font-size: 0.85em; gap: 3px; }
+  .nickname-cell .class-icon-img { width: 18px; height: 18px; }
+  .assign-select { font-size: 0.75em; padding: 3px 5px; }
+
+  /* 추천 스케줄 */
+  .recommend-section h3 { font-size: 1em; }
+  .recommend-card { padding: 14px; border-radius: 12px; }
+  .recommend-card h4 { font-size: 0.92em; }
+  .recommend-card .day-info { font-size: 0.82em; }
+  .people-tag { font-size: 0.72em; padding: 2px 6px; }
+  .summary-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .summary-card { padding: 10px 4px; border-radius: 10px; }
+  .summary-card .day-label { font-size: 0.78em; }
+  .summary-card .day-date { font-size: 0.68em; }
+  .summary-card .count-circle { width: 36px; height: 36px; font-size: 1em; }
+  .summary-card .count-label { font-size: 0.65em; }
+  .summary-names { font-size: 0.6em; }
+  .recommend-force-block { padding: 12px; }
+
+  /* 파티 편성 */
+  .party-config-bar { gap: 6px; }
+  .party-cfg-item { padding: 5px 10px; font-size: 0.78em; }
+  .party-add-btn { padding: 6px 12px; font-size: 0.8em; }
+  .party-board-area { flex-direction: column; gap: 10px; }
+  .party-board-box { flex: none; width: 100%; }
+  .party-board-title { font-size: 0.88em; }
+  .force-inner { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .inner-party-title { font-size: 0.75em; }
+  .pslot { padding: 5px 8px; font-size: 0.78em; min-height: 32px; }
+  .pslot .slot-icon { width: 22px; height: 22px; }
+  .slot-time { font-size: 0.68em; }
+  .member-pool-title { font-size: 0.85em; }
+  .member-pool { padding: 10px; gap: 6px; }
+  .pool-member { padding: 8px 8px; font-size: 0.78em; min-width: 56px; }
+  .pool-member .drag-icon { width: 24px; height: 24px; }
+  .pool-party { font-size: 0.65em; }
+  .pool-time { font-size: 0.68em; }
+
+  /* 멤버 관리 */
+  .member-item { padding: 10px; gap: 8px; font-size: 0.88em; }
+  .member-item .class-icon-img { width: 22px; height: 22px; }
+  .member-group-title { font-size: 0.82em; padding: 5px 10px; }
+  .delete-btn { padding: 10px 20px; font-size: 0.85em; }
+
+  /* 고래의 전당 */
+  .whale-hall-header { padding: 14px 12px; border-radius: 12px; margin-bottom: 12px; }
+  .whale-title { font-size: 1.2em; }
+  .whale-subtitle { font-size: 0.75em; }
+  .whale-filters { gap: 4px; margin-bottom: 12px; }
+  .whale-filter-btn { padding: 5px 8px; font-size: 0.72em; border-radius: 14px; }
+  .whale-filter-icon { width: 16px; height: 16px; }
+  .ranking-podium { gap: 6px; padding: 0 4px; margin-bottom: 16px; }
+  .podium-card { padding: 10px 6px; border-radius: 12px; }
+  .podium-medal { font-size: 1.5em; }
+  .podium-rank { font-size: 0.65em; }
+  .podium-class-icon { width: 28px; height: 28px; }
+  .podium-nick { font-size: 0.82em; }
+  .podium-job { font-size: 0.68em; }
+  .podium-power { font-size: 0.72em; }
+  .ranking-row { padding: 8px 10px; gap: 6px; }
+  .ranking-num { width: 24px; font-size: 0.8em; }
+  .ranking-class-icon { width: 22px; height: 22px; }
+  .ranking-nick { font-size: 0.85em; }
+  .ranking-job { font-size: 0.72em; width: 40px; }
+  .ranking-power { font-size: 0.78em; min-width: 60px; }
+}
+
+@media (max-width: 380px) {
+  .tabs { grid-template-columns: repeat(2, 1fr); }
+  .class-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .class-btn { padding: 6px 2px; font-size: 0.68em; }
+  .class-icon-img { width: 24px; height: 24px; }
+  .summary-grid { grid-template-columns: repeat(3, 1fr); }
+  .force-inner { grid-template-columns: 1fr; }
+  .ranking-podium { gap: 4px; }
+  .podium-card { padding: 8px 4px; }
+  .podium-nick { font-size: 0.75em; }
+  .podium-power { font-size: 0.65em; }
+}

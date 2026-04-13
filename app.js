@@ -269,9 +269,19 @@ function loadData() {
   if (s) { allData = JSON.parse(s); renderAll(); }
   if (SCRIPT_URL) {
     fetch(SCRIPT_URL).then(r => r.json())
-      .then(data => { allData = data; saveData(); renderAll(); })
+      .then(data => { allData = data; autoAssign(); saveData(); renderAll(); })
       .catch(e => showMsg('⚠️ 서버 연결 실패 — 로컬 데이터 사용 중', '#e65100'));
   }
+}
+function autoAssign() {
+  const slotMap = {};
+  forces.forEach(f => f.parties.forEach(p => p.slots.forEach(n => { if (n) slotMap[n] = f.id; })));
+  allData.forEach(m => {
+    if (!m.partyId && slotMap[m.nickname]) {
+      m.partyId = slotMap[m.nickname];
+      m.partyName = forces.find(f => f.id === slotMap[m.nickname])?.name || '';
+    }
+  });
 }
 function renderAll() {
   renderStatus(); renderRecommend(); renderMembers();
