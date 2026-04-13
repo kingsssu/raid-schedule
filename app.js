@@ -608,7 +608,7 @@ function dropToPool(e) {
   const nick = e.dataTransfer.getData('text/plain') || draggingNick;
   if (!nick) return;
   forces.forEach(f => f.parties.forEach(p => { p.slots = p.slots.map(s => s === nick ? null : s); }));
-  saveParties(); renderPartyBoard();
+  saveParties(); renderPartyBoard(); renderMemberPool();
 }
 
 function removeSlot(fid, pid, slotIdx) {
