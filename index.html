@@ -20,16 +20,16 @@
 
   <!-- 탭 -->
   <nav class="tabs">
-    <button class="tab active" onclick="showTab('input')">📝 입력</button>
+    <button class="tab active" onclick="showTab('ranking')">🐋 고래의 전당</button>
+    <button class="tab" onclick="showTab('input')">📝 입력</button>
     <button class="tab" onclick="showTab('status')">📊 현황표</button>
     <button class="tab" onclick="showTab('recommend')">🏆 추천 스케줄</button>
     <button class="tab" onclick="showTab('party')">⚔️ 파티 편성</button>
-    <button class="tab" onclick="showTab('ranking')">🐋 고래의 전당</button>
     <button class="tab" onclick="showTab('manage')">⚙️ 멤버 관리</button>
   </nav>
 
   <!-- 입력 탭 -->
-  <section id="tab-input" class="tab-content active">
+  <section id="tab-input" class="tab-content">
     <div class="input-section">
       <div class="form-group">
         <label>닉네임</label>
@@ -87,7 +87,7 @@
     </div>
   </section>
   <!-- 랭킹 탭 -->
-  <section id="tab-ranking" class="tab-content">
+  <section id="tab-ranking" class="tab-content active">
     <div id="rankingContent" class="ranking-section"></div>
   </section>
 

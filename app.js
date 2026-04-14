@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPartySelect();
   renderCalendar();
   loadData();
+  renderRanking();
 });
 
 // ===== 파티 데이터 =====
