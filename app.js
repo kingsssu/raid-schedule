@@ -607,7 +607,18 @@ function getAvailTime(m, keys) {
 
 function getMemberPower(nick) {
   const members = rankingData?.members || RANKING_CACHE?.members || [];
-  const m = members.find(r => r.nickname === nick);
+  let m = members.find(r => r.nickname === nick);
+  if (!m) {
+    // 연속 2글자 이상 일치하는 멤버 찾기
+    let best = null, bestLen = 1;
+    for (const r of members) {
+      const a = nick, b = r.nickname;
+      for (let i = 0; i < a.length; i++)
+        for (let len = 2; len <= a.length - i; len++)
+          if (len > bestLen && b.includes(a.substring(i, i + len))) { best = r; bestLen = len; }
+    }
+    m = best;
+  }
   if (!m || !m.combat_power2) return '';
   return `${m.combat_power2.toLocaleString()} (${(m.combat_power2/1000).toFixed(1)}K)`;
 }
