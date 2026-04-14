@@ -544,7 +544,7 @@ function renderPartyBoard() {
         if (nick) {
           const m = wd.find(d => d.nickname === nick);
           const c = m ? CLASSES[m.classIdx] : null;
-          const timeInfo = m ? getAvailTime(m, keys) : '';
+          const powerInfo = getMemberPower(nick);
           return `<div class="pslot filled" draggable="true"
             ondragstart="dragMember(event,'${nick}')"
             ondrop="dropToSlot(event,'${f.id}','${p.id}',${i})" ondragover="event.preventDefault()"
@@ -554,7 +554,7 @@ function renderPartyBoard() {
               <span>${nick}</span>
               <button class="slot-remove" onclick="removeSlot('${f.id}','${p.id}',${i})">✕</button>
             </div>
-            ${timeInfo ? `<small class="slot-time">${timeInfo}</small>` : ''}
+            ${powerInfo ? `<small class="slot-time">${powerInfo}</small>` : ''}
           </div>`;
         }
         return `<div class="pslot empty"
@@ -587,13 +587,13 @@ function renderMemberPool() {
 
   el.innerHTML = unplaced.map(m => {
     const c = CLASSES[m.classIdx];
-    const timeInfo = getAvailTime(m, keys);
+    const powerInfo = getMemberPower(m.nickname);
     const pName = forces.find(f => f.id === m.partyId)?.name || m.partyName || '';
     return `<div class="pool-member" draggable="true" ondragstart="dragMember(event,'${m.nickname}')" style="border-color:${c.color}">
       <img src="${c.icon}" class="drag-icon">
       <span>${m.nickname}</span>
       ${pName ? `<small class="pool-party" style="color:${c.color}">${pName}</small>` : ''}
-      ${timeInfo ? `<small class="pool-time" style="color:${c.color}">${timeInfo}</small>` : ''}
+      ${powerInfo ? `<small class="pool-time" style="color:${c.color}">${powerInfo}</small>` : ''}
     </div>`;
   }).join('');
 }
@@ -603,6 +603,13 @@ function getAvailTime(m, keys) {
   if (!avail.length) return '';
   const times = avail.map(d => d.start).sort();
   return times[0] + (avail.length > 1 ? ` 외 ${avail.length-1}일` : '');
+}
+
+function getMemberPower(nick) {
+  const members = rankingData?.members || RANKING_CACHE?.members || [];
+  const m = members.find(r => r.nickname === nick);
+  if (!m || !m.combat_power2) return '';
+  return `${m.combat_power2.toLocaleString()} (${(m.combat_power2/1000).toFixed(1)}K)`;
 }
 
 let draggingNick = null;
