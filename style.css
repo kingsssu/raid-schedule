@@ -1102,6 +1102,7 @@ header h1 .whale { font-size: 1.1em; }
   text-align: center;
 }
 .inner-party-title small { color: #bdbdbd; font-weight: 400; margin-left: 4px; }
+.party-avg-power { text-align: center; font-size: 0.78em; font-weight: 600; color: #558b2f; margin-top: 6px; padding: 4px 0; background: #f1f8e9; border-radius: 8px; }
 
 .recommend-force-block {
   border: 2px solid #e8e8e8;

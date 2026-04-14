@@ -560,14 +560,21 @@ function renderPartyBoard() {
         return `<div class="pslot empty"
           ondrop="dropToSlot(event,'${f.id}','${p.id}',${i})" ondragover="event.preventDefault()">빈 슬롯</div>`;
       });
+      const partyPowers = p.slots.filter(Boolean).map(n => getMemberPowerNum(n)).filter(v => v > 0);
+      const partyAvg = partyPowers.length ? Math.round(partyPowers.reduce((a,b)=>a+b,0) / partyPowers.length) : 0;
       return `<div class="inner-party-box">
         <div class="inner-party-title">${p.name} <small>${p.slots.filter(Boolean).length}/4</small></div>
         <div class="pslot-grid">${slots.join('')}</div>
+        ${partyAvg ? `<div class="party-avg-power">평균 ${partyAvg.toLocaleString()} (${(partyAvg/1000).toFixed(1)}K)</div>` : ''}
       </div>`;
     }).join('');
 
+    const allSlots = f.parties.flatMap(p => p.slots.filter(Boolean));
+    const forcePowers = allSlots.map(n => getMemberPowerNum(n)).filter(v => v > 0);
+    const forceAvg = forcePowers.length ? Math.round(forcePowers.reduce((a,b)=>a+b,0) / forcePowers.length) : 0;
+
     return `<div class="party-board-box" style="border-color:${f.color}60">
-      <div class="party-board-title" style="color:${f.color};border-bottom-color:${f.color}30">${f.name}</div>
+      <div class="party-board-title" style="color:${f.color};border-bottom-color:${f.color}30">${f.name}${forceAvg ? ` <small style="font-weight:400;font-size:0.8em">⚡ 평균 ${forceAvg.toLocaleString()} (${(forceAvg/1000).toFixed(1)}K)</small>` : ''}</div>
       <div class="force-inner">${partyBoxes}</div>
     </div>`;
   }).join('');
@@ -603,6 +610,22 @@ function getAvailTime(m, keys) {
   if (!avail.length) return '';
   const times = avail.map(d => d.start).sort();
   return times[0] + (avail.length > 1 ? ` 외 ${avail.length-1}일` : '');
+}
+
+function getMemberPowerNum(nick) {
+  const members = rankingData?.members || RANKING_CACHE?.members || [];
+  let m = members.find(r => r.nickname === nick);
+  if (!m) {
+    let best = null, bestLen = 1;
+    for (const r of members) {
+      const a = nick, b = r.nickname;
+      for (let i = 0; i < a.length; i++)
+        for (let len = 2; len <= a.length - i; len++)
+          if (len > bestLen && b.includes(a.substring(i, i + len))) { best = r; bestLen = len; }
+    }
+    m = best;
+  }
+  return m?.combat_power2 || 0;
 }
 
 function getMemberPower(nick) {
